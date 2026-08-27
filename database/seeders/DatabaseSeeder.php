@@ -17,10 +17,10 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-
         $this->call([
-        \Laravolt\Indonesia\Seeds\DatabaseSeeder::class,
-    ]);
+            \Laravolt\Indonesia\Seeds\DatabaseSeeder::class,
+            CypressTestSeeder::class,
+        ]);
 
         // SEED USERS -----
         $admin = User::create([
@@ -49,26 +49,26 @@ class DatabaseSeeder extends Seeder
 
         // ----- SEED CATEGORIES -----
         $catLiving = Category::create([
-            'name' => 'Living Room', 
-            'slug' => 'living-room', 
+            'name' => 'Living Room',
+            'slug' => 'living-room',
             'icon' => 'living-room.jpg'
         ]);
-        
+
         $catBed = Category::create([
-            'name' => 'Bedroom', 
-            'slug' => 'bedroom', 
+            'name' => 'Bedroom',
+            'slug' => 'bedroom',
             'icon' => 'bedroom.jpg'
         ]);
-        
+
         $catKitchen = Category::create([
-            'name' => 'Kitchen & Dining', 
-            'slug' => 'kitchen-dining', 
+            'name' => 'Kitchen & Dining',
+            'slug' => 'kitchen-dining',
             'icon' => 'kitchen.jpg'
         ]);
-        
+
         $catDecor = Category::create([
-            'name' => 'Decoration', 
-            'slug' => 'decoration', 
+            'name' => 'Decoration',
+            'slug' => 'decoration',
             'icon' => 'teakroot.jpg'
         ]);
 
@@ -159,7 +159,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // ----- SEED ORDERS -----
-        
+
         // Order 1: Lokal (Sudah Bayar & Selesai)
         $order1 = Order::create([
             'user_id' => $customer1->id,
@@ -206,9 +206,9 @@ class DatabaseSeeder extends Seeder
             'shipping_method' => 'Cargo (Pending Confirmation)',
             'total_weight_kg' => 45,
             'total_product_price' => 6000000,
-            'shipping_price' => 0, 
-            'grand_total' => 6000000, 
-            'order_status' => 'waiting_quote', 
+            'shipping_price' => 0,
+            'grand_total' => 6000000,
+            'order_status' => 'waiting_quote',
             'payment_status' => 'unpaid',
         ]);
         OrderItem::create([
