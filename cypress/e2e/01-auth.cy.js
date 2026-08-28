@@ -9,7 +9,7 @@ describe("TC-01 & TC-02: Register dan Login (US-001)", () => {
 
     cy.get('input[wire\\:model="name"]').type("Cypress Register User");
     cy.get('input[wire\\:model="email"]').type(randomEmail);
-    cy.get('input[wire\\:model="password"]').type("password123");
+    cy.get('input[wire\\:model="password"]').type("password");
 
     cy.contains("button", "Sign up").click();
 
@@ -26,7 +26,7 @@ describe("TC-01 & TC-02: Register dan Login (US-001)", () => {
     cy.get('input[wire\\:model="email"]').should("be.visible");
 
     cy.get('input[wire\\:model="email"]').type("customer@cypress.test");
-    cy.get('input[wire\\:model="password"]').type("password123");
+    cy.get('input[wire\\:model="password"]').type("password");
 
     cy.contains("button", "Sign in").click();
 
