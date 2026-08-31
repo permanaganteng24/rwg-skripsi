@@ -4,7 +4,10 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "test:reset": "php artisan config:clear && php artisan migrate:fresh --seed --env=testing",
+        "test:e2e": "npm run test:reset && npx cypress run",
+        "test:e2e:open": "npm run test:reset && npx cypress open"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",

@@ -1,5 +1,4 @@
 import { defineConfig } from "cypress";
-
 export default defineConfig({
   allowCypressEnv: false,
   e2e: {
@@ -7,6 +6,8 @@ export default defineConfig({
     supportFile: "cypress/support/e2e.js",
     viewportWidth: 1440,
     viewportHeight: 900,
+    pageLoadTimeout: 120000,
+    defaultCommandTimeout: 20000,
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },

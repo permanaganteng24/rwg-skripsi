@@ -12,17 +12,26 @@ describe("TC-19: Ulasan Produk - Tambah Ulasan (US-012)", () => {
     cy.wait(1000);
 
     cy.contains("ORD-REVIEW-TEST")
-      .parents("div")
-      .contains("Tulis Ulasan", { timeout: 10000 })
+      .closest(".rounded-xl")
+      .contains("View Details")
       .click({ force: true });
+
+    cy.wait(2000);
+
+    cy.contains("Tulis Ulasan", { timeout: 10000 }).click({ force: true });
 
     cy.wait(2000);
 
     cy.contains("How was the product?", { timeout: 10000 }).should("be.visible");
     cy.wait(1000);
 
-    // Klik bintang ke-5 lewat method Livewire setRating(5)
-    cy.get('[wire\\:click="setRating(5)"]', { timeout: 10000 }).first().click({ force: true });
+    // Klik bintang ke-5 (Alpine.js x-data dengan @entangle ke Livewire $rating)
+    cy.contains("Your Rating")
+      .parent()
+      .find('button[type="button"]')
+      .eq(4)
+      .click({ force: true });
+
     cy.wait(1000);
 
     cy.get('textarea[wire\\:model="comment"]').type("Produk sangat memuaskan, kualitas kayu jati sangat bagus dan pengerjaan rapi.");
