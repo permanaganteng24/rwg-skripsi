@@ -44,7 +44,7 @@ Follow these steps to run the project locally:
 1.  **Clone the Repository**
 
     ```bash
-    git clone [https://github.com/ahmdhzq/rizqiwoodgallery.git](https://github.com/ahmdhzq/rizqiwoodgallery.git)
+    git clone [https://github.com/permanaganteng24/rwg-skripsi.git](https://github.com/permanaganteng24/rwg-skripsi.git)
     cd rizqiwoodgallery
     ```
 
