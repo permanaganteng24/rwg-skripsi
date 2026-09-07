@@ -25,6 +25,7 @@ class OrderResource extends Resource
     protected static ?string $navigationGroup = 'Shop Management';
     protected static ?int $navigationSort = 3;
     protected static ?string $navigationLabel = 'Orders';
+
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::where('order_status', 'waiting_quote')->count() ?: null;
@@ -36,230 +37,288 @@ class OrderResource extends Resource
             ->schema([
                 Forms\Components\Group::make()
                     ->schema([
-                        Forms\Components\Section::make('Order Information')
-                            ->schema([
-                                Forms\Components\TextInput::make('code')
-                                    ->label('Order ID')
-                                    ->disabled()
-                                    ->dehydrated()
-                                    ->columnSpanFull(),
-
-                                Forms\Components\Select::make('order_status')
-                                    ->label('Status')
-                                    ->options([
-                                        'new' => 'New Order',
-                                        'waiting_quote' => 'Waiting Quote (Cargo)',
-                                        'waiting_payment' => 'Waiting Payment',
-                                        'processing' => 'Processing (Paid)',
-                                        'shipped' => 'Shipped',
-                                        'completed' => 'Completed',
-                                        'cancelled' => 'Cancelled',
-                                    ])
-                                    ->required()
-                                    ->default('new'),
-
-                                Forms\Components\Select::make('payment_status')
-                                    ->options([
-                                        'unpaid' => 'Unpaid',
-                                        'paid' => 'Paid',
-                                        'failed' => 'Failed',
-                                    ])
-                                    ->required(),
-
-                                Forms\Components\TextInput::make('shipping_method')
-                                    ->label('Metode Pengiriman')
-                                    ->disabled()
-                                    ->dehydrated()
-                                    ->columnSpanFull(),
-
-                            ])->columns(2),
-
-                        Forms\Components\Section::make('Customer Details')
-                            ->schema([
-                                Forms\Components\TextInput::make('shipping_name')->label('Nama Penerima')->required(),
-                                Forms\Components\TextInput::make('shipping_phone')->label('WhatsApp')->required(),
-                                Forms\Components\TextInput::make('shipping_email')->label('Email')->email(),
-                                Forms\Components\TextInput::make('company_name')->label('Perusahaan (Opsional)'),
-
-                                Forms\Components\Textarea::make('shipping_address')
-                                    ->label('Alamat Lengkap')
-                                    ->columnSpanFull()
-                                    ->required(),
-
-                                Forms\Components\TextInput::make('shipping_city')->label('Kota/Kab'),
-                                Forms\Components\TextInput::make('shipping_district')->label('Kecamatan'),
-                                Forms\Components\TextInput::make('shipping_province')->label('Provinsi'),
-                                Forms\Components\TextInput::make('shipping_postal_code')->label('Kode Pos'),
-                            ])->columns(2),
+                        static::getOrderInformationSection(),
+                        static::getCustomerDetailsSection(),
                     ])->columnSpan(2),
 
                 Forms\Components\Group::make()
                     ->schema([
-                        Forms\Components\Section::make('Cost Calculation')
-                            ->schema([
-                                Forms\Components\TextInput::make('total_product_price')
-                                    ->label('Subtotal Product')
-                                    ->prefix('Rp')
-                                    ->numeric()
-                                    ->disabled()
-                                    ->dehydrated(),
-
-                                Forms\Components\TextInput::make('shipping_price')
-                                    ->label('Biaya Ongkir (Real)')
-                                    ->prefix('Rp')
-                                    ->numeric()
-                                    ->default(0),
-
-                                Forms\Components\TextInput::make('discount_amount')
-                                    ->label('Diskon')
-                                    ->prefix('Rp')
-                                    ->numeric()
-                                    ->disabled()
-                                    ->dehydrated(),
-
-                                Forms\Components\TextInput::make('grand_total')
-                                    ->label('Grand Total')
-                                    ->prefix('Rp')
-                                    ->numeric()
-                                    ->disabled()
-                                    ->dehydrated(),
-                            ]),
-
-                        Forms\Components\Section::make('Admin Notes')
-                            ->schema([
-                                Forms\Components\Textarea::make('notes')
-                                    ->label('Catatan Internal')
-                                    ->rows(3),
-                            ]),
+                        static::getCostCalculationSection(),
+                        static::getAdminNotesSection(),
                     ])->columnSpan(1),
             ])->columns(3);
+    }
+
+    private static function getOrderInformationSection(): Forms\Components\Section
+    {
+        return Forms\Components\Section::make('Order Information')
+            ->schema([
+                Forms\Components\TextInput::make('code')
+                    ->label('Order ID')
+                    ->disabled()
+                    ->dehydrated()
+                    ->columnSpanFull(),
+
+                Forms\Components\Select::make('order_status')
+                    ->label('Status')
+                    ->options([
+                        'new' => 'New Order',
+                        'waiting_quote' => 'Waiting Quote (Cargo)',
+                        'waiting_payment' => 'Waiting Payment',
+                        'processing' => 'Processing (Paid)',
+                        'shipped' => 'Shipped',
+                        'completed' => 'Completed',
+                        'cancelled' => 'Cancelled',
+                    ])
+                    ->required()
+                    ->default('new'),
+
+                Forms\Components\Select::make('payment_status')
+                    ->options([
+                        'unpaid' => 'Unpaid',
+                        'paid' => 'Paid',
+                        'failed' => 'Failed',
+                    ])
+                    ->required(),
+
+                Forms\Components\TextInput::make('shipping_method')
+                    ->label('Metode Pengiriman')
+                    ->disabled()
+                    ->dehydrated()
+                    ->columnSpanFull(),
+            ])->columns(2);
+    }
+
+    private static function getCustomerDetailsSection(): Forms\Components\Section
+    {
+        return Forms\Components\Section::make('Customer Details')
+            ->schema([
+                Forms\Components\TextInput::make('shipping_name')->label('Nama Penerima')->required(),
+                Forms\Components\TextInput::make('shipping_phone')->label('WhatsApp')->required(),
+                Forms\Components\TextInput::make('shipping_email')->label('Email')->email(),
+                Forms\Components\TextInput::make('company_name')->label('Perusahaan (Opsional)'),
+
+                Forms\Components\Textarea::make('shipping_address')
+                    ->label('Alamat Lengkap')
+                    ->columnSpanFull()
+                    ->required(),
+
+                Forms\Components\TextInput::make('shipping_city')->label('Kota/Kab'),
+                Forms\Components\TextInput::make('shipping_district')->label('Kecamatan'),
+                Forms\Components\TextInput::make('shipping_province')->label('Provinsi'),
+                Forms\Components\TextInput::make('shipping_postal_code')->label('Kode Pos'),
+            ])->columns(2);
+    }
+
+    private static function getCostCalculationSection(): Forms\Components\Section
+    {
+        return Forms\Components\Section::make('Cost Calculation')
+            ->schema([
+                Forms\Components\TextInput::make('total_product_price')
+                    ->label('Subtotal Product')
+                    ->prefix('Rp')
+                    ->numeric()
+                    ->disabled()
+                    ->dehydrated(),
+
+                Forms\Components\TextInput::make('shipping_price')
+                    ->label('Biaya Ongkir (Real)')
+                    ->prefix('Rp')
+                    ->numeric()
+                    ->default(0),
+
+                Forms\Components\TextInput::make('discount_amount')
+                    ->label('Diskon')
+                    ->prefix('Rp')
+                    ->numeric()
+                    ->disabled()
+                    ->dehydrated(),
+
+                Forms\Components\TextInput::make('grand_total')
+                    ->label('Grand Total')
+                    ->prefix('Rp')
+                    ->numeric()
+                    ->disabled()
+                    ->dehydrated(),
+            ]);
+    }
+
+    private static function getAdminNotesSection(): Forms\Components\Section
+    {
+        return Forms\Components\Section::make('Admin Notes')
+            ->schema([
+                Forms\Components\Textarea::make('notes')
+                    ->label('Catatan Internal')
+                    ->rows(3),
+            ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('code')
-                    ->label('Order ID')
-                    ->searchable()
-                    ->sortable()
-                    ->weight('bold')
-                    ->copyable(),
-
-                Tables\Columns\TextColumn::make('shipping_name')
-                    ->label('Customer')
-                    ->searchable()
-                    ->description(fn(Order $record) => $record->shipping_city ?? '-'),
-
-                Tables\Columns\TextColumn::make('grand_total')
-                    ->money('IDR')
-                    ->sortable()
-                    ->weight('bold'),
-
-                Tables\Columns\TextColumn::make('payment_status')
-                    ->badge()
-                    ->color(fn(string $state): string => match ($state) {
-                        'paid' => 'success',
-                        'unpaid' => 'warning',
-                        'failed' => 'danger',
-                    }),
-
-                Tables\Columns\TextColumn::make('order_status')
-                    ->badge()
-                    ->color(fn(string $state): string => match ($state) {
-                        'waiting_quote' => 'danger',
-                        'waiting_payment' => 'warning',
-                        'processing' => 'info',
-                        'shipped' => 'success',
-                        'completed' => 'success',
-                        'cancelled' => 'gray',
-                        default => 'gray',
-                    }),
-            ])
+            ->columns(static::getTableColumns())
             ->defaultSort('created_at', 'desc')
-            ->actions([
-                Tables\Actions\Action::make('input_ongkir')
-                    ->label('Input Ongkir')
-                    ->icon('heroicon-m-currency-dollar')
-                    ->color('info')
-                    ->visible(fn(Order $record) => $record->order_status === 'waiting_quote')
-                    ->form([
-                        Forms\Components\TextInput::make('shipping_price')
-                            ->label('Biaya Ongkir Real (Rp)')
-                            ->required()
-                            ->numeric()
-                            ->prefix('Rp'),
-                        Forms\Components\Textarea::make('notes')
-                            ->label('Catatan untuk Customer')
-                            ->default('Ongkir sudah dihitung, silakan lakukan pembayaran.'),
-                    ])
-                    ->action(function (Order $record, array $data) {
-                        $newGrandTotal = $record->total_product_price + $data['shipping_price'] - $record->discount_amount;
+            ->actions(static::getTableActions())
+            ->bulkActions(static::getTableBulkActions());
+    }
 
-                        $record->update([
-                            'shipping_price' => $data['shipping_price'],
-                            'grand_total' => $newGrandTotal,
-                            'order_status' => 'waiting_payment',
-                            'notes' => $data['notes']
-                        ]);
+    private static function getTableColumns(): array
+    {
+        return [
+            Tables\Columns\TextColumn::make('code')
+                ->label('Order ID')
+                ->searchable()
+                ->sortable()
+                ->weight('bold')
+                ->copyable(),
 
-                        Notification::make()
-                            ->title('Ongkir Disimpan')
-                            ->body('Status order berubah menjadi Waiting Payment.')
-                            ->success()
-                            ->send();
-                    }),
+            Tables\Columns\TextColumn::make('shipping_name')
+                ->label('Customer')
+                ->searchable()
+                ->description(fn(Order $record) => $record->shipping_city ?? '-'),
 
-                Tables\Actions\Action::make('update_resi')
-                    ->label('Kirim Resi')
-                    ->icon('heroicon-m-truck')
-                    ->color('primary')
-                    ->visible(fn(Order $record) => in_array($record->order_status, ['processing', 'shipped']))
-                    ->form([
-                        Forms\Components\TextInput::make('tracking_number')
-                            ->label('Nomor Resi')
-                            ->required(),
-                        Forms\Components\TextInput::make('shipping_courier')
-                            ->label('Nama Kurir/Ekspedisi')
-                            ->default('JNE Trucking'),
-                    ])
-                    ->action(function (Order $record, array $data) {
-                        $record->update([
-                            'tracking_number' => $data['tracking_number'],
-                            'shipping_courier' => $data['shipping_courier'],
-                            'order_status' => 'shipped',
-                        ]);
+            Tables\Columns\TextColumn::make('grand_total')
+                ->money('IDR')
+                ->sortable()
+                ->weight('bold'),
 
-                        Notification::make()->title('Resi Berhasil Diupdate')->success()->send();
-                    }),
-                Action::make('pdf')
-                    ->label('Invoice')
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->color('info')
-                    ->url(fn(Order $record) => route('invoice.download', $record))
-                    ->openUrlInNewTab(),
+            Tables\Columns\TextColumn::make('payment_status')
+                ->badge()
+                ->color(fn(string $state): string => match ($state) {
+                    'paid' => 'success',
+                    'unpaid' => 'warning',
+                    'failed' => 'danger',
+                }),
 
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            Tables\Columns\TextColumn::make('order_status')
+                ->badge()
+                ->color(fn(string $state): string => match ($state) {
+                    'waiting_quote' => 'danger',
+                    'waiting_payment' => 'warning',
+                    'processing' => 'info',
+                    'shipped' => 'success',
+                    'completed' => 'success',
+                    'cancelled' => 'gray',
+                    default => 'gray',
+                }),
+        ];
+    }
+
+    private static function getTableActions(): array
+    {
+        return [
+            static::getInputOngkirAction(),
+            static::getUpdateResiAction(),
+            static::getPdfInvoiceAction(),
+            Tables\Actions\ViewAction::make(),
+            Tables\Actions\EditAction::make(),
+        ];
+    }
+
+    private static function getInputOngkirAction(): Action
+    {
+        return Tables\Actions\Action::make('input_ongkir')
+            ->label('Input Ongkir')
+            ->icon('heroicon-m-currency-dollar')
+            ->color('info')
+            ->visible(fn(Order $record) => $record->order_status === 'waiting_quote')
+            ->form([
+                Forms\Components\TextInput::make('shipping_price')
+                    ->label('Biaya Ongkir Real (Rp)')
+                    ->required()
+                    ->numeric()
+                    ->prefix('Rp'),
+                Forms\Components\Textarea::make('notes')
+                    ->label('Catatan untuk Customer')
+                    ->default('Ongkir sudah dihitung, silakan lakukan pembayaran.'),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    
-                    Tables\Actions\BulkAction::make('export_pdf')
-                        ->label('Export PDF')
-                        ->icon('heroicon-o-arrow-down-tray')
-                        ->openUrlInNewTab()
-                        ->deselectRecordsAfterCompletion()
-                        ->action(function (Collection $records) {
-                            return response()->streamDownload(function () use ($records) {
-                                echo Pdf::loadHtml(
-                                    Blade::render('pdf.orders', ['orders' => $records])
-                                )->stream();
-                            }, 'rekap-penjualan-' . date('Y-m-d') . '.pdf');
-                        }),
-                ]),
-            ]);
+            ->action(fn(Order $record, array $data) => static::saveOngkir($record, $data));
+    }
+
+    private static function saveOngkir(Order $record, array $data): void
+    {
+        $newGrandTotal = $record->total_product_price + $data['shipping_price'] - $record->discount_amount;
+
+        $record->update([
+            'shipping_price' => $data['shipping_price'],
+            'grand_total' => $newGrandTotal,
+            'order_status' => 'waiting_payment',
+            'notes' => $data['notes'],
+        ]);
+
+        Notification::make()
+            ->title('Ongkir Disimpan')
+            ->body('Status order berubah menjadi Waiting Payment.')
+            ->success()
+            ->send();
+    }
+
+    private static function getUpdateResiAction(): Action
+    {
+        return Tables\Actions\Action::make('update_resi')
+            ->label('Kirim Resi')
+            ->icon('heroicon-m-truck')
+            ->color('primary')
+            ->visible(fn(Order $record) => in_array($record->order_status, ['processing', 'shipped']))
+            ->form([
+                Forms\Components\TextInput::make('tracking_number')
+                    ->label('Nomor Resi')
+                    ->required(),
+                Forms\Components\TextInput::make('shipping_courier')
+                    ->label('Nama Kurir/Ekspedisi')
+                    ->default('JNE Trucking'),
+            ])
+            ->action(fn(Order $record, array $data) => static::saveResi($record, $data));
+    }
+
+    private static function saveResi(Order $record, array $data): void
+    {
+        $record->update([
+            'tracking_number' => $data['tracking_number'],
+            'shipping_courier' => $data['shipping_courier'],
+            'order_status' => 'shipped',
+        ]);
+
+        Notification::make()->title('Resi Berhasil Diupdate')->success()->send();
+    }
+
+    private static function getPdfInvoiceAction(): Action
+    {
+        return Action::make('pdf')
+            ->label('Invoice')
+            ->icon('heroicon-o-arrow-down-tray')
+            ->color('info')
+            ->url(fn(Order $record) => route('invoice.download', $record))
+            ->openUrlInNewTab();
+    }
+
+    private static function getTableBulkActions(): array
+    {
+        return [
+            Tables\Actions\BulkActionGroup::make([
+                Tables\Actions\DeleteBulkAction::make(),
+                static::getExportPdfBulkAction(),
+            ]),
+        ];
+    }
+
+    private static function getExportPdfBulkAction(): Tables\Actions\BulkAction
+    {
+        return Tables\Actions\BulkAction::make('export_pdf')
+            ->label('Export PDF')
+            ->icon('heroicon-o-arrow-down-tray')
+            ->openUrlInNewTab()
+            ->deselectRecordsAfterCompletion()
+            ->action(fn(Collection $records) => static::streamOrdersPdf($records));
+    }
+
+    private static function streamOrdersPdf(Collection $records)
+    {
+        return response()->streamDownload(function () use ($records) {
+            echo Pdf::loadHtml(
+                Blade::render('pdf.orders', ['orders' => $records])
+            )->stream();
+        }, 'rekap-penjualan-' . date('Y-m-d') . '.pdf');
     }
 
     public static function getRelations(): array
@@ -281,6 +340,6 @@ class OrderResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->with(['items']); 
+            ->with(['items']);
     }
 }

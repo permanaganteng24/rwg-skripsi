@@ -54,16 +54,23 @@ class CheckoutPage extends Component
         $this->cart_items = CartManagement::getCartItemsFromCookie();
         if (count($this->cart_items) == 0) return redirect()->route('products.index');
 
-        if (Auth::check()) {
-            $user = Auth::user();
-            $names = explode(' ', $user->name, 2);
-            $this->first_name = $names[0] ?? '';
-            $this->last_name = $names[1] ?? '';
-            $this->email = $user->email;
-        }
-        
+        $this->fillUserDataIfAuthenticated();
+
         $this->provinces = Province::pluck('name', 'code');
         $this->calculateTotals(); 
+    }
+
+    private function fillUserDataIfAuthenticated()
+    {
+        if (!Auth::check()) {
+            return;
+        }
+
+        $user = Auth::user();
+        $names = explode(' ', $user->name, 2);
+        $this->first_name = $names[0] ?? '';
+        $this->last_name = $names[1] ?? '';
+        $this->email = $user->email;
     }
 
     // --- LOGIC DROPDOWN & ONGKIR ---
@@ -89,48 +96,70 @@ class CheckoutPage extends Component
 
     public function updatedSelectedCity($value) {
         $this->districts = District::where('city_code', $value)->pluck('name', 'code');
+        $this->updateLombokShippingStatus($value);
+        $this->calculateTotals();
+    }
 
-        $cityName = City::where('code', $value)->value('name');
-        if ($cityName && (str_contains(strtoupper($cityName), 'LOMBOK') || str_contains(strtoupper($cityName), 'MATARAM'))) {
+    private function updateLombokShippingStatus($cityCode)
+    {
+        $cityName = City::where('code', $cityCode)->value('name');
+        $isLombokArea = $cityName && (
+            str_contains(strtoupper($cityName), 'LOMBOK') ||
+            str_contains(strtoupper($cityName), 'MATARAM')
+        );
+
+        if ($isLombokArea) {
             $this->is_lombok = true;
             $this->shipping_status_text = 'Free Local Shipping';
         } else {
             $this->is_lombok = false;
             $this->shipping_status_text = 'Cargo (Pending Confirmation)';
         }
-        $this->calculateTotals();
     }
 
     // --- LOGIC HITUNG TOTAL ---
     public function calculateTotals() {
-        $this->subtotal = 0;
-        foreach ($this->cart_items as $item) {
-            $this->subtotal += $item['total_amount'];
-        }
-
+        $this->subtotal = $this->sumCartItems();
         $this->discount = 0;
         $this->applied_coupon_code = null;
 
-        if (Session::has('coupon')) {
-            $coupon = Session::get('coupon');
-            
-            if ($this->subtotal >= ($coupon['min_spend'] ?? 0)) {
-                $this->applied_coupon_code = $coupon['code'];
-                
-                if ($coupon['type'] == 'fixed') {
-                    $this->discount = $coupon['value'];
-                } else {
-                    $this->discount = $this->subtotal * ($coupon['value'] / 100);
-                }
-            } else {
-                Session::forget('coupon');
-            }
-        }
-        if($this->discount > $this->subtotal) {
+        $this->applyCouponIfEligible();
+
+        if ($this->discount > $this->subtotal) {
             $this->discount = $this->subtotal;
         }
-        $this->shipping_cost = 0; 
+
+        $this->shipping_cost = 0;
         $this->grand_total = ($this->subtotal - $this->discount) + $this->shipping_cost;
+    }
+
+    private function sumCartItems()
+    {
+        $total = 0;
+        foreach ($this->cart_items as $item) {
+            $total += $item['total_amount'];
+        }
+
+        return $total;
+    }
+
+    private function applyCouponIfEligible()
+    {
+        if (!Session::has('coupon')) {
+            return;
+        }
+
+        $coupon = Session::get('coupon');
+
+        if ($this->subtotal < ($coupon['min_spend'] ?? 0)) {
+            Session::forget('coupon');
+            return;
+        }
+
+        $this->applied_coupon_code = $coupon['code'];
+        $this->discount = $coupon['type'] == 'fixed'
+            ? $coupon['value']
+            : $this->subtotal * ($coupon['value'] / 100);
     }
 
     public function placeOrder()
@@ -142,29 +171,58 @@ class CheckoutPage extends Component
             'email' => 'required|email',
         ]);
 
-        $country = ''; $province = ''; $city = ''; $district = '';
-
-        if ($this->location_type === 'indonesia') {
-            $this->validate(['selectedProvince' => 'required', 'selectedCity' => 'required']);
-            $country = 'Indonesia';
-            $province = Province::where('code', $this->selectedProvince)->value('name');
-            $city = City::where('code', $this->selectedCity)->value('name');
-            $district = District::where('code', $this->selectedDistrict)->value('name') ?? '-';
-        } else {
-            $this->validate(['manual_country_name' => 'required', 'manual_city' => 'required']);
-            $country = $this->manual_country_name;
-            $province = $this->manual_state;
-            $city = $this->manual_city;
-            $district = '-';
-        }
-
-        $orderStatus = $this->is_lombok ? 'waiting_payment' : 'waiting_quote';
-        $shippingMethod = $this->is_lombok ? 'Free Local Shipping' : 'Cargo (Pending Confirmation)';
+        $shippingAddress = $this->resolveShippingAddress();
 
         $this->calculateTotals();
 
-        // Save Order
-        $order = Order::create([
+        $order = $this->createOrder($shippingAddress);
+        $this->createOrderItems($order);
+
+        CartManagement::clearCartItems();
+        Session::forget('coupon');
+
+        return redirect()->route('success', ['order_id' => $order->id]);
+    }
+
+    private function resolveShippingAddress()
+    {
+        if ($this->location_type === 'indonesia') {
+            return $this->resolveIndonesianAddress();
+        }
+
+        return $this->resolveManualAddress();
+    }
+
+    private function resolveIndonesianAddress()
+    {
+        $this->validate(['selectedProvince' => 'required', 'selectedCity' => 'required']);
+
+        return [
+            'country' => 'Indonesia',
+            'province' => Province::where('code', $this->selectedProvince)->value('name'),
+            'city' => City::where('code', $this->selectedCity)->value('name'),
+            'district' => District::where('code', $this->selectedDistrict)->value('name') ?? '-',
+        ];
+    }
+
+    private function resolveManualAddress()
+    {
+        $this->validate(['manual_country_name' => 'required', 'manual_city' => 'required']);
+
+        return [
+            'country' => $this->manual_country_name,
+            'province' => $this->manual_state,
+            'city' => $this->manual_city,
+            'district' => '-',
+        ];
+    }
+
+    private function createOrder(array $shippingAddress)
+    {
+        $orderStatus = $this->is_lombok ? 'waiting_payment' : 'waiting_quote';
+        $shippingMethod = $this->is_lombok ? 'Free Local Shipping' : 'Cargo (Pending Confirmation)';
+
+        return Order::create([
             'user_id' => Auth::id(),
             'code' => 'ORD-' . strtoupper(uniqid()),
             'shipping_name' => $this->first_name . ' ' . $this->last_name,
@@ -172,26 +230,28 @@ class CheckoutPage extends Component
             'shipping_email' => $this->email,
             'shipping_phone' => $this->phone,
 
-            'shipping_country' => $country,
-            'shipping_province' => $province,
-            'shipping_city' => $city,
-            'shipping_district' => $district,
+            'shipping_country' => $shippingAddress['country'],
+            'shipping_province' => $shippingAddress['province'],
+            'shipping_city' => $shippingAddress['city'],
+            'shipping_district' => $shippingAddress['district'],
             'shipping_postal_code' => $this->zip_code,
             'shipping_address' => $this->address,
 
             'shipping_method' => $shippingMethod,
-            'shipping_price' => 0, 
-            
-            // --- UPDATE PAYMENT---
+            'shipping_price' => 0,
+
             'total_product_price' => $this->subtotal,
             'discount_amount' => $this->discount,
             'grand_total' => $this->grand_total,
-            
+
             'order_status' => $orderStatus,
             'payment_status' => 'unpaid',
             'notes' => $this->notes,
         ]);
+    }
 
+    private function createOrderItems(Order $order)
+    {
         foreach ($this->cart_items as $item) {
             OrderItem::create([
                 'order_id' => $order->id,
@@ -202,11 +262,6 @@ class CheckoutPage extends Component
                 'subtotal' => $item['total_amount'],
             ]);
         }
-
-        CartManagement::clearCartItems();
-        Session::forget('coupon'); 
-
-        return redirect()->route('success', ['order_id' => $order->id]);
     }
 
     public function render()
