@@ -1,32 +1,32 @@
 <nav x-data="{ mobileMenuOpen: false }" class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
+    @php
+        $menu = [
+            ['/', 'Home', '/'],
+            ['/products', 'Catalog', 'products*'],
+            ['/about', 'About Us', 'about*'],
+            ['/how-to-order', 'How to Order', 'how-to-order*'],
+            ['/reviews', 'Reviews', 'reviews*'],
+            ['/contact', 'Contact', 'contact*'],
+        ];
+    @endphp
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16 items-center">
 
             <a href="/" class="flex-shrink-0 flex items-center">
-                <img src="{{ asset('assets/image/logo-big.png') }}" alt="Rizqi Wood Logo" class="h-9 w-auto">
+                <img src="{{ asset('assets/image/logo-big.png') }}" alt="" class="h-9 w-auto">
+                <span class="ml-2 hidden sm:block leading-tight">
+                    <span class="block font-serif font-bold text-gray-900 text-sm">Rizqi Wood Gallery</span>
+                    <span class="block text-[10px] text-gray-500">Lombok, Indonesia</span>
+                </span>
             </a>
 
-            <div class="hidden md:flex space-x-8">
-                <a href="/"
-                    class="text-gray-600 hover:text-amber-800 font-medium transition {{ request()->is('/') ? 'text-amber-800' : '' }}">
-                    Home
-                </a>
-                <a href="/products"
-                    class="text-gray-600 hover:text-amber-800 font-medium transition {{ request()->is('products*') ? 'text-amber-800' : '' }}">
-                    Catalog
-                </a>
-                <a href="/reviews"
-                    class="text-gray-600 hover:text-amber-800 font-medium transition {{ request()->is('reviews*') ? 'text-amber-800' : '' }}">
-                    Reviews
-                </a>
-                <a href="/about"
-                    class="text-gray-600 hover:text-amber-800 font-medium transition {{ request()->is('about*') ? 'text-amber-800' : '' }}">
-                    About
-                </a>
-                <a href="/contact"
-                    class="text-gray-600 hover:text-amber-800 font-medium transition {{ request()->is('contact*') ? 'text-amber-800' : '' }}">
-                    Contact
-                </a>
+            <div class="hidden md:flex space-x-7 text-sm">
+                @foreach ($menu as [$url, $label, $pattern])
+                    <a href="{{ $url }}"
+                        class="font-medium transition pb-1 border-b-2 {{ request()->is($pattern) ? 'text-gray-900 border-accent' : 'text-gray-600 border-transparent hover:text-brand' }}">
+                        {{ $label }}
+                    </a>
+                @endforeach
             </div>
 
             <div class="flex items-center space-x-6">
@@ -111,14 +111,12 @@
         class="md:hidden border-t border-gray-100 bg-white shadow-lg absolute w-full left-0 z-40"
         style="display: none;">
         <div class="px-4 pt-2 pb-4 space-y-1">
-            <a href="/"
-                class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-amber-800 hover:bg-gray-50 {{ request()->is('/') ? 'bg-amber-50 text-amber-800' : '' }}">
-                Home
-            </a>
-            <a href="/products"
-                class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-amber-800 hover:bg-gray-50 {{ request()->is('products*') ? 'bg-amber-50 text-amber-800' : '' }}">
-                Catalog
-            </a>
+            @foreach ($menu as [$url, $label, $pattern])
+                <a href="{{ $url }}"
+                    class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-50 {{ request()->is($pattern) ? 'bg-amber-50 text-brand' : 'text-gray-600 hover:text-brand' }}">
+                    {{ $label }}
+                </a>
+            @endforeach
 
             <div class="border-t border-gray-100 my-2"></div>
 

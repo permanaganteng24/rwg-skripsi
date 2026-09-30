@@ -1,368 +1,253 @@
-<div>
-    <div class="relative w-full h-[600px] lg:h-[720px] flex items-center justify-center bg-stone-100 overflow-visible mb-24">
-        <div class="absolute inset-0 z-0">
-            <img src="assets/image/hero-crop.png"
-                alt="Background Living Room" class="w-full h-full object-cover opacity-90">
-            <div class="absolute inset-0 bg-black/10"></div>
-        </div>
+<div class="bg-[#FAF8F5]">
+    @php
+        $categoryImage = function ($name) {
+            $n = strtolower($name);
+            return match (true) {
+                str_contains($n, 'living') => 'assets/image/living-room.jpg',
+                str_contains($n, 'bedroom') => 'assets/image/bedroom.jpg',
+                str_contains($n, 'dining') => 'assets/image/dinning-table.jpeg',
+                str_contains($n, 'kitchen') => 'assets/image/kitchen.jpg',
+                default => 'assets/image/teakroot.jpg',
+            };
+        };
+    @endphp
 
-        {{-- Hero Section --}}
-        <div class="relative z-10 text-center px-4 max-w-5xl mx-auto">
-            <p class="text-sm md:text-base tracking-[0.2em] text-white font-semibold uppercase mb-4 drop-shadow-md">
-                Artistry from NTB, Indonesia
+    {{-- HERO --}}
+    <section class="relative min-h-[460px] lg:min-h-[540px] flex items-center overflow-hidden bg-charcoal">
+        <img src="{{ asset('assets/image/hero-crop.jpg') }}" alt="" fetchpriority="high"
+            class="absolute inset-0 w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/10"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-16">
+            <p class="inline-block border border-gold/60 text-gold text-[11px] font-semibold uppercase tracking-wider rounded-full px-4 py-1.5 mb-6">
+                Certified legal teak from Lombok, Indonesia
             </p>
-            <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-2 drop-shadow-lg">
-                A GALLERY OF
+            <h1 class="font-serif font-bold text-white text-4xl md:text-5xl lg:text-6xl leading-tight max-w-xl">
+                Timeless Elegance For Your Living Space
             </h1>
-            <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-8 drop-shadow-lg">
-                NATURAL ELEGANCE
-            </h1>
+            <p class="text-stone-200 mt-5 max-w-lg leading-relaxed">
+                Handcrafted from legally certified Perhutani solid teak by master Lombok woodcarvers.
+                Generational tropical hardwood durability, with clean contemporary minimalism.
+            </p>
 
-            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
+            <div class="flex flex-wrap gap-3 mt-8">
                 <a href="/products"
-                    class="px-10 py-3 bg-[#6B4226] hover:bg-[#5D3A20] text-white font-medium rounded shadow-lg transition duration-300">
-                    Shop Now
+                    class="px-7 py-3 bg-accent hover:bg-accent-dark text-white font-semibold rounded-md transition">
+                    Explore Collection &rsaquo;
                 </a>
-                <a href="#story"
-                    class="px-8 py-3 border-2 border-white text-white font-medium rounded hover:bg-white hover:text-gray-900 transition duration-300 shadow-sm">
-                    Explore Our Craft
+                <a href="/about"
+                    class="px-7 py-3 border border-white/50 text-white font-semibold rounded-md hover:bg-white/10 transition">
+                    Wood Provenance &amp; SVLK
                 </a>
             </div>
-        </div>
 
-        {{-- Search Bar Section --}}
-        <div class="absolute -bottom-8 left-0 right-0 z-30 px-4">
-            <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-2xl p-2 flex items-center border border-gray-100">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400 ml-3" fill="none"
-                    viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search Product..."
-                    class="flex-grow px-4 py-3 outline-none  rounded-2xl text-gray-600 placeholder-gray-400 bg-transparent">
-                <button
-                    class="bg-[#6B4226] hover:bg-[#5D3A20] text-white px-12 py-3 rounded-md transition font-medium hidden sm:block">
-                    Search
-                </button>
-            </div>
-        </div>
-    </div>
-
-    {{-- About Section --}}
-    <section id="story" class="py-12 mb-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div>
-                <span class="text-amber-700 font-bold tracking-wide uppercase text-sm">The Art Woodcraft</span>
-                <h2 class="text-4xl font-serif font-bold text-gray-900 mt-2 mb-6">Why Choose US?</h2>
-                <p class="text-gray-500 mb-8 leading-relaxed">
-                    We don't just sell furniture, we create heirlooms. Each piece from our gallery is a story of premium
-                    materials and passionate local artisans from NTB, built to bring character and warmth to your space.
-                </p>
-                {{-- List Text --}}
-                <div class="space-y-6">
-                    <div class="border-b border-gray-200 pb-4">
-                        <h3 class="font-bold text-gray-900 text-lg">Bespoke & Custom Furniture</h3>
-                        <p class="text-gray-600 text-sm mt-1">Tailored to your exact vision and space.</p>
-                    </div>
-                    <div class="border-b border-gray-200 pb-4">
-                        <h3 class="font-bold text-gray-900 text-lg">Premium & Sustainable Materials</h3>
-                        <p class="text-gray-600 text-sm mt-1">Only the finest, locally-sourced NTB woods.</p>
-                    </div>
-                    <div class="border-b border-gray-200 pb-4">
-                        <h3 class="font-bold text-gray-900 text-lg">Global & Cargo Expertise</h3>
-                        <p class="text-gray-600 text-sm mt-1">Expertly handled delivery, anywhere in the world.s.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="relative h-[400px] md:h-[500px] mt-8 lg:mt-0">
-                <img src="assets/image/living-room-2.jpeg"
-                    class="absolute top-0 right-0 w-3/4 h-3/5 object-cover rounded-tr-[50px] rounded-bl-[50px] shadow-lg z-10 border-4 border-white">
-                <img src="assets/image/living-room.jpg"
-                    class="absolute bottom-0 left-0 w-3/4 h-3/5 object-cover rounded-tl-[50px] rounded-br-[50px] shadow-lg z-0">
+            <div class="flex flex-wrap gap-x-10 gap-y-4 mt-12">
+                <div><p class="font-serif font-bold text-gold text-2xl">100%</p><p class="text-xs text-stone-300">Certified legal teak</p></div>
+                <div><p class="font-serif font-bold text-gold text-2xl">0 IDR</p><p class="text-xs text-stone-300">Free Lombok delivery</p></div>
+                <div><p class="font-serif font-bold text-gold text-2xl">ISPM 15</p><p class="text-xs text-stone-300">Export-ready crating</p></div>
             </div>
         </div>
     </section>
 
-    <section class="py-12 bg-white mb-12 border-y border-gray-50">
-        <div
-            class="max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-gray-100">
-            <div class="py-4 md:py-0">
-                <h3 class="text-5xl font-bold text-gray-900">10+</h3>
-                <p class="text-gray-500 mt-2 text-sm uppercase tracking-wide">Years of<br>Craftsmanship</p>
-            </div>
-            <div class="py-4 md:py-0">
-                <h3 class="text-5xl font-bold text-gray-900">700+</h3>
-                <p class="text-gray-500 mt-2 text-sm uppercase tracking-wide">Projects & Pieces<br>Delivered</p>
-            </div>
-            <div class="py-4 md:py-0">
-                <h3 class="text-5xl font-bold text-gray-900">10+</h3>
-                <p class="text-gray-500 mt-2 text-sm uppercase tracking-wide">Countries Served<br>Worldwide</p>
-            </div>
-        </div>
-    </section>
-
-
-    {{-- Category Section --}}
+    {{-- CATEGORIES --}}
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div class="text-center mb-12">
-            <h2 class="text-3xl font-serif font-bold text-gray-900">Our Signature Collections</h2>
-            <p class="text-gray-500 mt-3 max-w-2xl mx-auto">Discover curated pieces that bring warmth, character, and
-                natural elegance.</p>
+        <div class="flex items-end justify-between mb-8 gap-4">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-wider text-accent mb-1">Best Collection</p>
+                <h2 class="font-serif font-bold text-gray-900 text-3xl">Explore By Category</h2>
+            </div>
+            <a href="/products" class="text-sm font-semibold text-accent hover:underline whitespace-nowrap">View All Categories &raquo;</a>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             @foreach ($categories as $category)
-                @php
-                    $imagePath = 'assets/image/teakroot.jpg';
-
-                    if (stripos($category->name, 'Living') !== false) {
-                        $imagePath = 'assets/image/living-room.jpg';
-                    } elseif (stripos($category->name, 'Dining') !== false) {
-                        $imagePath = 'assets/image/dinning-table.jpeg';
-                    } elseif (
-                        stripos($category->name, 'Kitchen') !== false ||
-                        stripos($category->name, 'Dining') !== false
-                    ) {
-                        $imagePath = 'assets/image/kitchen.jpg';
-                    } elseif (stripos($category->name, 'Decoration') !== false) {
-                        $imagePath = 'assets/image/teakroot.jpg';
-                    }
-                @endphp
-
-                <a href="/products?category={{ $category->slug }}" class="group cursor-pointer block">
-                    <div class="relative overflow-hidden rounded-3xl aspect-[4/5] mb-4 shadow-sm bg-stone-200">
-
-                        <img src="{{ asset($imagePath) }}" alt="{{ $category->name }}"
-                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-
-                        <div
-                            class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80">
+                <a href="/products?category={{ $category->slug }}" wire:key="cat-{{ $category->id }}"
+                    class="group relative block aspect-[4/5] rounded-2xl overflow-hidden bg-charcoal shadow-md">
+                    <img src="{{ asset($categoryImage($category->name)) }}" alt="" loading="lazy"
+                        class="absolute inset-0 w-full h-full object-cover transition duration-500 group-hover:scale-105">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4 flex items-end justify-between gap-2">
+                        <div>
+                            <p class="text-[11px] font-semibold text-gold">{{ $category->products_count }} Products</p>
+                            <h3 class="font-serif font-bold text-white text-lg leading-tight">{{ $category->name }}</h3>
                         </div>
-
-                        <div class="absolute bottom-6 left-0 right-0 text-center">
-                            <h3 class="text-white font-medium text-lg group-hover:text-amber-200 transition">
-                                {{ $category->name }}</h3>
-                        </div>
+                        <span class="shrink-0 w-8 h-8 rounded-full bg-white/20 text-white flex items-center justify-center group-hover:bg-accent transition">&rsaquo;</span>
                     </div>
                 </a>
             @endforeach
         </div>
     </section>
 
-    {{-- Newest Products Section --}}
-    <section class="py-16 bg-stone-50 overflow-hidden my-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col lg:flex-row gap-12 items-center">
-
-                <div class="lg:w-1/3 text-center lg:text-left">
-                    <h2 class="text-4xl font-serif font-bold text-gray-900 mb-4">Our Newest<br>Collection</h2>
-                    <p class="text-gray-500 mb-8">Our designer already made a lot of beautiful prototype of rooms that
-                        inspire you.</p>
-                    <a href="/products?sort=newest"
-                        class="inline-block px-8 py-3 bg-[#6B4226] hover:bg-[#5D3A20] text-white font-medium rounded  transition shadow-md">
-                        Explore Now
-                    </a>
-                </div>
-
-                <div class="lg:w-2/3 w-full relative" x-data="{
-                    scrollLeft() {
-                            $refs.scroller.scrollBy({ left: -300, behavior: 'smooth' });
-                        },
-                        scrollRight() {
-                            $refs.scroller.scrollBy({ left: 300, behavior: 'smooth' });
-                        }
-                }">
-
-                    <button @click="scrollLeft()"
-                        class="absolute left-0 top-1/2 -translate-y-1/2 z-10 -ml-4 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-gray-600 hover:text-amber-800 hover:scale-110 transition border border-gray-100 hidden md:flex">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                            stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                        </svg>
-                    </button>
-
-                    <div x-ref="scroller" class="flex gap-6 overflow-x-auto pb-8 snap-x scrollbar-hide scroll-smooth"
-                        style="-ms-overflow-style: none; scrollbar-width: none;">
-                        @foreach ($products as $product)
-                            <a href="/products/{{ $product->slug }}"
-                                class="min-w-[260px] md:min-w-[280px] snap-center group cursor-pointer block">
-                                <div
-                                    class="bg-white rounded-xl p-4 shadow-sm group-hover:shadow-md transition duration-300 h-full border border-transparent group-hover:border-stone-200">
-
-                                    <div class="relative bg-stone-100 rounded-lg overflow-hidden aspect-[4/5] mb-4">
-                                        @php $image = $product->galleries->first(); @endphp
-
-                                        @if ($image)
-                                            <img src="{{ asset('storage/' . $image->image_url) }}"
-                                                alt="{{ $product->name }}"
-                                                class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                                        @else
-                                            <div
-                                                class="w-full h-full flex flex-col items-center justify-center text-gray-400 bg-gray-200">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                                    class="w-10 h-10 mb-2 opacity-50">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                                                </svg>
-                                                <span class="text-sm font-medium">No Image</span>
-                                            </div>
-                                        @endif
-                                    </div>
-
-                                    <div class="space-y-1">
-                                        <p class="text-xs text-gray-500">
-                                            {{ $product->categories->first()->name ?? 'Furniture' }}</p>
-                                        <h3
-                                            class="font-bold text-gray-900 text-lg truncate group-hover:text-amber-700 transition">
-                                            {{ $product->name }}</h3>
-                                        <div class="flex items-center justify-between">
-                                            <span class="font-bold text-amber-700">Rp
-                                                {{ number_format($product->price, 0, ',', '.') }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        @endforeach
-                    </div>
-
-                    <button @click="scrollRight()"
-                        class="absolute right-0 top-1/2 -translate-y-1/2 z-10 -mr-4 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-gray-600 hover:text-amber-800 hover:scale-110 transition border border-gray-100 hidden md:flex">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                            stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                        </svg>
-                    </button>
-
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- Best Products Section --}}
-    <section class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    {{-- BEST PRODUCTS --}}
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         <div class="text-center mb-10">
-            <h2 class="text-3xl font-serif font-bold text-gray-900">Our Best Quality Products</h2>
-            <p class="text-gray-500 mt-3">Explore our exclusive collection.</p>
+            <p class="text-xs font-semibold uppercase tracking-wider text-accent mb-1">Featured Collection</p>
+            <h2 class="font-serif font-bold text-gray-900 text-3xl">Our Best Quality Products</h2>
+            <p class="text-gray-500 mt-3 max-w-xl mx-auto text-sm">
+                Handcrafted solid teak pieces with organic sourcing and lifetime durability.
+            </p>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             @foreach ($products as $product)
-                <div
-                    class="group bg-white rounded-2xl p-3 hover:shadow-xl transition duration-300 border border-transparent hover:border-gray-100">
-                    <div class="relative bg-stone-100 rounded-xl overflow-hidden aspect-square mb-4">
-                        @php $image = $product->galleries->first(); @endphp
+                @php
+                    $image = $product->galleries->first();
+                    [$badgeText, $badgeColor] = match ($product->availability) {
+                        'ready' => ['Ready Stock', 'bg-emerald-600'],
+                        'pre_order' => ['Pre-Order', 'bg-accent'],
+                        default => ['Sold Out', 'bg-gray-500'],
+                    };
+                    $rating = (int) round($product->reviews_avg_rating ?? 0);
+                    $soldOut = $product->availability === 'out_of_stock';
+                @endphp
+                <div wire:key="prod-{{ $product->id }}"
+                    class="group bg-white rounded-xl border border-stone-200 overflow-hidden flex flex-col hover:shadow-lg transition">
+                    <a href="/products/{{ $product->slug }}" class="relative block aspect-[4/3] bg-stone-100">
                         @if ($image)
-                            <img src="{{ asset('storage/' . $image->image_url) }}" alt="{{ $product->name }}"
-                                class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <img src="{{ asset('storage/' . $image->image_url) }}" alt="{{ $product->name }}" loading="lazy"
+                                class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
                         @else
-                            <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">No
-                                Img</div>
+                            <span class="absolute inset-0 flex items-center justify-center text-sm text-gray-400">No image</span>
                         @endif
-                    </div>
-                    <div class="px-2 pb-2">
-                        <div class="flex text-yellow-500 text-xs mb-1">★★★★☆ <span
-                                class="text-gray-400 ml-1">(5)</span></div>
-                        <h3 class="text-lg font-bold text-gray-900 group-hover:text-amber-700 cursor-pointer truncate">
-                            <a href="/products/{{ $product->slug }}">{{ $product->name }}</a>
+                        <span class="absolute top-3 left-3 {{ $badgeColor }} text-white text-[10px] font-semibold rounded px-2 py-1">{{ $badgeText }}</span>
+                    </a>
+
+                    <div class="p-4 flex flex-col flex-1">
+                        <div class="text-xs mb-1">
+                            @if ($product->reviews_count > 0)
+                                <span class="text-gold">{{ str_repeat('★', $rating) }}{{ str_repeat('☆', 5 - $rating) }}</span>
+                                <span class="text-gray-400">({{ $product->reviews_count }})</span>
+                            @else
+                                <span class="text-gray-400">No reviews yet</span>
+                            @endif
+                        </div>
+                        <h3 class="font-serif font-bold text-gray-900 truncate">
+                            <a href="/products/{{ $product->slug }}" class="hover:text-accent">{{ $product->name }}</a>
                         </h3>
-                        <div class="flex items-center gap-3 mt-1">
-                            <span class="font-bold text-gray-900">Rp
-                                {{ number_format($product->price, 0, ',', '.') }}</span>
+                        <p class="text-xs text-gray-500 mt-1 line-clamp-2">{{ \Illuminate\Support\Str::limit(strip_tags($product->description), 70) }}</p>
+
+                        <div class="flex items-center justify-between mt-auto pt-4">
+                            <p class="font-bold text-gray-900 text-sm">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                            <button type="button" wire:click="addToCart({{ $product->id }})" @disabled($soldOut)
+                                class="text-xs font-semibold border border-gray-300 rounded-md px-3 py-1.5 hover:bg-brand hover:text-white hover:border-brand transition disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-inherit">
+                                Add
+                            </button>
                         </div>
                     </div>
                 </div>
             @endforeach
         </div>
+
+        <div class="text-center mt-10">
+            <a href="/products" class="inline-block bg-charcoal hover:bg-black text-white text-sm font-semibold rounded-md px-7 py-3 transition">
+                Open Complete Catalog
+            </a>
+        </div>
     </section>
 
-    {{-- Reviews Section --}}
-    <section class="py-20 bg-white border-t border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-serif font-bold text-gray-900">What Our Clients Say</h2>
-                <p class="text-gray-500 mt-4 max-w-2xl mx-auto">
-                    Don't just take our word for it. Read honest stories from homeowners and partners who have
-                    transformed their spaces with our craftsmanship.
+    {{-- WORKSHOP & CARGO --}}
+    <section class="border-t border-stone-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-wider text-accent mb-2">Craftsmanship &amp; International Cargo</p>
+                <h2 class="font-serif font-bold text-gray-900 text-3xl md:text-4xl leading-tight">
+                    From Meninting Workshop to Prestigious Global Interiors
+                </h2>
+                <p class="text-gray-600 mt-4 text-sm leading-relaxed">
+                    Rizqi Wood Gallery has manufactured and distributed hundreds of bespoke teak furniture sets for
+                    private villas in Lombok, luxury resorts in Bali, and 40ft export containers for the USA,
+                    Australia, and Europe.
                 </p>
+
+                <ul class="mt-6 space-y-4 text-sm text-gray-600">
+                    @foreach ([
+                        ['SVLK Certified Legal Wood:', 'Sourced from state-managed Perhutani forests, kiln-dried to a moisture level under 12%.'],
+                        ['ISPM 15 Export Pallets:', 'Double-frame support and certified fumigation for safe ocean and air freight.'],
+                        ['Free Local Island Delivery:', 'Our own fleet delivers to villas and resorts across Mataram & West Lombok.'],
+                    ] as [$strong, $text])
+                        <li class="flex gap-3">
+                            <span class="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold flex items-center justify-center">&#10003;</span>
+                            <span><strong class="text-gray-900">{{ $strong }}</strong> {{ $text }}</span>
+                        </li>
+                    @endforeach
+                </ul>
+
+                <a href="https://wa.me/6281945591108" target="_blank" rel="noopener"
+                    class="inline-block mt-8 bg-accent hover:bg-accent-dark text-white text-sm font-semibold rounded-md px-6 py-3 transition">
+                    Consult Custom Order via WhatsApp &rsaquo;
+                </a>
             </div>
 
-            <div class="relative" x-data="{
-                scrollLeft() { $refs.testiContainer.scrollBy({ left: -350, behavior: 'smooth' }); },
-                    scrollRight() { $refs.testiContainer.scrollBy({ left: 350, behavior: 'smooth' }); }
-            }">
+            <div class="grid grid-cols-2 gap-3 md:gap-4">
+                <img src="{{ asset('assets/image/export-loading.jpeg') }}" alt="Loading furniture into a truck" loading="lazy" class="w-full aspect-square object-cover rounded-xl">
+                <img src="{{ asset('assets/image/export-behind-truck.jpeg') }}" alt="Furniture packed for export" loading="lazy" class="w-full aspect-square object-cover rounded-xl mt-6">
+                <img src="{{ asset('assets/image/export-side-truck.jpeg') }}" alt="Export container truck" loading="lazy" class="w-full aspect-square object-cover rounded-xl -mt-6">
+                <img src="{{ asset('assets/image/dinning-table-modern.jpeg') }}" alt="Finished teak dining table" loading="lazy" class="w-full aspect-square object-cover rounded-xl">
+            </div>
+        </div>
+    </section>
 
-                @if ($reviews->count() > 0)
-                    <button @click="scrollLeft"
-                        class="absolute left-0 top-1/2 -translate-y-1/2 -ml-4 z-10 w-12 h-12 bg-white rounded-full shadow-lg border border-gray-100 flex items-center justify-center text-gray-600 hover:text-amber-800 hover:scale-110 transition hidden md:flex">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                            stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                        </svg>
-                    </button>
-
-                    <button @click="scrollRight"
-                        class="absolute right-0 top-1/2 -translate-y-1/2 -mr-4 z-10 w-12 h-12 bg-white rounded-full shadow-lg border border-gray-100 flex items-center justify-center text-gray-600 hover:text-amber-800 hover:scale-110 transition hidden md:flex">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                            stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                        </svg>
-                    </button>
-                @endif
-
-                <div x-ref="testiContainer"
-                    class="flex gap-6 overflow-x-auto pb-8 snap-x scrollbar-hide scroll-smooth"
-                    style="-ms-overflow-style: none; scrollbar-width: none;">
-
-                    @forelse($reviews as $review)
-                        <div
-                            class="min-w-[300px] md:min-w-[380px] snap-center bg-stone-50 rounded-2xl p-8 border border-stone-100 h-full flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center gap-4 mb-6">
-                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($review->user->name) }}&background=random&color=fff"
-                                        alt="{{ $review->user->name }}"
-                                        class="w-14 h-14 rounded-full object-cover shadow-sm">
-
-                                    <div>
-                                        <h4 class="font-bold text-gray-900 text-lg">{{ $review->user->name }}</h4>
-                                        <div class="flex text-yellow-400 text-sm">
-                                            @for ($i = 1; $i <= 5; $i++)
-                                                @if ($i <= $review->rating)
-                                                    <x-heroicon-s-star class="w-4 h-4" />
-                                                @else
-                                                    <x-heroicon-o-star class="w-4 h-4 text-gray-300" />
-                                                @endif
-                                            @endfor
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="text-gray-600 italic leading-relaxed text-sm">
-                                    "{{ Str::limit($review->comment, 150) }}"
-                                </p>
-                            </div>
-                            <p class="text-xs text-gray-400 mt-4 text-right">
-                                {{ $review->created_at->format('d M Y') }}
-                            </p>
-                        </div>
-                    @empty
-                        <div class="w-full text-center py-10">
-                            <div
-                                class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-stone-100 mb-4">
-                                <x-heroicon-o-chat-bubble-left-ellipsis class="w-8 h-8 text-gray-400" />
-                            </div>
-                            <p class="text-gray-500">Belum ada review dari pelanggan.</p>
-                        </div>
-                    @endforelse
-
+    {{-- REVIEWS --}}
+    <section class="border-t border-stone-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="flex items-end justify-between gap-4 flex-wrap mb-8">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-accent mb-1">Client Testimonials</p>
+                    <h2 class="font-serif font-bold text-gray-900 text-3xl">What Our Clients Say</h2>
+                    <p class="text-gray-500 text-sm mt-2">Reviews from homeowners, villa managers, and architectural partners.</p>
                 </div>
+                <a href="/reviews" class="text-sm font-semibold text-accent hover:underline whitespace-nowrap">View All Reviews &amp; Statistics &raquo;</a>
+            </div>
 
-                @if ($reviews->count() > 0)
-                    <div class="flex justify-center gap-2 mt-4">
-                        @foreach ($reviews->take(4) as $key => $review)
-                            <span
-                                class="w-2 h-2 rounded-full {{ $loop->first ? 'bg-amber-800 w-4' : 'bg-gray-300' }}"></span>
-                        @endforeach
-                    </div>
-                @endif
+            @if ($reviews->isEmpty())
+                <p class="text-center text-gray-500 py-10">Belum ada review dari pelanggan.</p>
+            @else
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    @foreach ($reviews as $review)
+                        <div wire:key="rev-{{ $review->id }}" class="bg-white border border-stone-200 rounded-xl p-5 flex flex-col">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-gold">{{ str_repeat('★', (int) $review->rating) }}{{ str_repeat('☆', 5 - (int) $review->rating) }}</span>
+                                <span class="text-gray-400">{{ $review->created_at->format('d M Y') }}</span>
+                            </div>
+                            <p class="italic text-gray-600 text-sm leading-relaxed mt-3 flex-1">
+                                "{{ \Illuminate\Support\Str::limit($review->comment, 140) }}"
+                            </p>
+                            <div class="flex items-center gap-3 mt-4 pt-4 border-t border-stone-100">
+                                <span class="w-8 h-8 rounded-full bg-amber-100 text-amber-800 text-xs font-bold flex items-center justify-center">
+                                    {{ strtoupper(mb_substr($review->user->name, 0, 1)) }}
+                                </span>
+                                <div class="min-w-0">
+                                    <p class="text-sm font-semibold text-gray-900 truncate">{{ $review->user->name }}</p>
+                                    <p class="text-[11px] text-gray-400">Verified buyer</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+    </section>
+
+    {{-- CTA --}}
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div class="rounded-2xl bg-gradient-to-br from-[#2c2019] to-charcoal p-8 md:p-12">
+            <p class="text-xs font-semibold uppercase tracking-wider text-gold mb-2">Architects, Villas &amp; B2B Projects</p>
+            <h2 class="font-serif font-bold text-white text-3xl md:text-4xl leading-tight max-w-2xl">
+                Need Custom Dimensions for Your Architectural Plans?
+            </h2>
+            <p class="text-stone-300 text-sm leading-relaxed mt-4 max-w-2xl">
+                Send us your blueprints, AutoCAD sketches, or 3D renders. We build bespoke pieces and complete
+                furnishing packages for villas and resorts, with direct workshop pricing.
+            </p>
+            <div class="flex flex-wrap gap-3 mt-8">
+                <a href="https://wa.me/6281945591108" target="_blank" rel="noopener"
+                    class="bg-accent hover:bg-accent-dark text-white text-sm font-semibold rounded-md px-6 py-3 transition">
+                    Chat WhatsApp (+62 819-4559-1108)
+                </a>
+                <a href="/contact"
+                    class="border border-white/40 text-white text-sm font-semibold rounded-md px-6 py-3 hover:bg-white/10 transition">
+                    Submit Project Inquiry
+                </a>
             </div>
         </div>
     </section>

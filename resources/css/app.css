@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700;800&display=swap');
 @import 'tailwindcss';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -6,6 +7,16 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    /* Font: sans untuk teks biasa, serif untuk judul (kelas font-serif) */
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+
+    /* Warna brand. Dipakai lewat kelas bg-brand, hover:bg-brand-dark, text-brand */
+    --color-brand: #6B4226;
+    --color-brand-dark: #5D3A20;
+    --color-accent: #E0620F;
+    --color-accent-dark: #C4540B;
+    --color-charcoal: #1D1815;
+    --color-gold: #F0A030;
 }
