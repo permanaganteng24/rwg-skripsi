@@ -53,61 +53,94 @@ class CartManagement
     {
         // A. JIKA USER LOGIN -> SIMPAN KE DB
         if (Auth::check()) {
-            $user_id = Auth::id();
-            $existingItem = CartItem::where('user_id', $user_id)
-                                    ->where('product_id', $product_id)
-                                    ->first();
-
-            if ($existingItem) {
-                $existingItem->quantity += $qty;
-                if($existingItem->quantity < 1) $existingItem->quantity = 1;
-                $existingItem->save();
-            } else {
-                CartItem::create([
-                    'user_id' => $user_id,
-                    'product_id' => $product_id,
-                    'quantity' => $qty > 0 ? $qty : 1
-                ]);
-            }
-            return self::getCartItemsFromCookie();
+            return self::addItemToCartForUser($product_id, $qty);
         }
 
         // B. JIKA GUEST -> SIMPAN KE COOKIE
-        $cart_items = self::getCartItemsFromCookie();
-        $existing_item = null;
+        return self::addItemToCartForGuest($product_id, $qty);
+    }
 
-        foreach ($cart_items as $key => $item) {
-            if ($item['product_id'] == $product_id) {
-                $existing_item = $key;
-                break;
-            }
+    // --- Penanganan pengguna login ---
+    static private function addItemToCartForUser($product_id, $qty)
+    {
+        $user_id = Auth::id();
+        $existingItem = CartItem::where('user_id', $user_id)
+                                ->where('product_id', $product_id)
+                                ->first();
+
+        if ($existingItem) {
+            $existingItem->quantity = self::normalizeQuantity($existingItem->quantity + $qty);
+            $existingItem->save();
+        } else {
+            CartItem::create([
+                'user_id' => $user_id,
+                'product_id' => $product_id,
+                'quantity' => $qty > 0 ? $qty : 1
+            ]);
         }
 
-        $product = Product::with('galleries')->find($product_id);
+        return self::getCartItemsFromCookie();
+    }
 
-        if ($existing_item !== null) {
-            $cart_items[$existing_item]['quantity'] += $qty;
-            if ($cart_items[$existing_item]['quantity'] < 1) {
-                 $cart_items[$existing_item]['quantity'] = 1;
-            }
-            $cart_items[$existing_item]['total_amount'] = $cart_items[$existing_item]['quantity'] * $cart_items[$existing_item]['price'];
+    // --- Penanganan pengguna tamu (guest) ---
+    static private function addItemToCartForGuest($product_id, $qty)
+    {
+        $cart_items = self::getCartItemsFromCookie();
+        $existing_key = self::findCartItemKey($cart_items, $product_id);
+
+        if ($existing_key !== null) {
+            $cart_items[$existing_key] = self::updateGuestCartItemQty($cart_items[$existing_key], $qty);
         } else {
-            if ($product) {
-                $item = [
-                    'product_id' => $product->id,
-                    'name' => $product->name,
-                    'slug' => $product->slug,
-                    'image' => $product->galleries->first()->image_url ?? '',
-                    'price' => $product->price,
-                    'quantity' => $qty,
-                    'total_amount' => $product->price * $qty
-                ];
-                $cart_items[] = $item;
+            $newItem = self::buildGuestCartItem($product_id, $qty);
+            if ($newItem) {
+                $cart_items[] = $newItem;
             }
         }
 
         self::addCartItemsToCookie($cart_items);
         return $cart_items;
+    }
+
+    static private function findCartItemKey($cart_items, $product_id)
+    {
+        foreach ($cart_items as $key => $item) {
+            if ($item['product_id'] == $product_id) {
+                return $key;
+            }
+        }
+        return null;
+    }
+
+    static private function updateGuestCartItemQty($item, $qty)
+    {
+        $item['quantity'] = self::normalizeQuantity($item['quantity'] + $qty);
+        $item['total_amount'] = $item['quantity'] * $item['price'];
+        return $item;
+    }
+
+    static private function buildGuestCartItem($product_id, $qty)
+    {
+        $product = Product::with('galleries')->find($product_id);
+
+        if (!$product) {
+            return null;
+        }
+
+        return [
+            'product_id' => $product->id,
+            'name' => $product->name,
+            'slug' => $product->slug,
+            'image' => $product->galleries->first()->image_url ?? '',
+            'price' => $product->price,
+            'quantity' => $qty,
+            'total_amount' => $product->price * $qty
+        ];
+    }
+
+    // Jumlah item di keranjang minimal 1
+    static private function normalizeQuantity($quantity)
+    {
+        return $quantity < 1 ? 1 : $quantity;
     }
 
     // === HAPUS ITEM ===
